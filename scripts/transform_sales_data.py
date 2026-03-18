@@ -45,23 +45,32 @@ def classify_type(product_name: str) -> str:
     # Products starting with "$" mean extra toppings
     if product_name.startswith("$"):
         return "Topping"
+    
+    topping_keywords = [
+        "extra soup"
+    ]
 
     drink_keywords = [
         "coke", "water", "tea", "sake", "ramune",
-        "lemonade", "san pellegrino", "ginger ale", "sprite"
+        "lemonade", "san pellegrino", "ginger ale", "sprite" , "sapporo",
+        "otsukare", "shandy", "sparkling"
     ]
     dessert_keywords = [
-        "cheesecake", "ice cream", "mochi"
+        "cheesecake", "ice cream", "cheese cake"
     ]
     side_keywords = [
-        "gyoza", "edamame", "karaage", "takoyaki", "rice", "gohan"
+        "gyoza", "edamame", "karaage", "takoyaki", "rice", "gohan",
+        "fries", "don", "donburi", "side", "golden sesame meat",
+        "shirataki"
     ]
     main_keywords = [
-        "ramen", "donburi", "don", "miso", "shoyu",
-        "tonkotsu", "spicy", "original", "beef",
+        "ramen", "miso", "shoyu", "plain",
+        "spicy", "original", "beef",
         "chicken", "pork"
     ]
 
+    if any(k in name for k in topping_keywords):
+        return "Topping"
     if any(k in name for k in drink_keywords):
         return "Drink"
     if any(k in name for k in dessert_keywords):
