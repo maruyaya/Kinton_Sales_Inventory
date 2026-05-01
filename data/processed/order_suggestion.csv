@@ -1,0 +1,16 @@
+﻿ingredient,order_status,suggested_order_qty,current_stock,pending_order_qty,effective_stock,required_stock,raw_order_suggestion,avg_daily_consumption,avg_period_consumption,total_recent_consumption,periods_used,stock_count_date,next_expected_delivery,adjustment_count_recent,order_multiple
+curry,OK,0,2,0,2,0,0,0,0,0,0,2/4/2026,,0,1
+ito togarashi,OK,0,2.5,0,2.5,2,0,0.0375,0.3,1.2,4,4/30/2026,,2,1
+kizami nori,OK,0,3,0,3,2,0,0.133333333,0.45,1.8,4,4/30/2026,,0,1
+naruto,OK,0,2,0,2,0,0,0,0,0,0,3/11/2026,,0,1
+nori,OK,0,1.5,0,1.5,0,0,0,0,0,0,3/23/2026,,0,1
+red ginger,OK,0,2,0,2,2,0,0.274142157,2.375,9.5,4,4/30/2026,,2,1
+tonkatsu sauce,OK,0,0.1,0,0.1,0,0,0.008333333,0.025,0.1,4,4/30/2026,,0,1
+yuzu juice,OK,0,7.2,0,7.2,5,0,0.065625,0.45,1.8,4,4/30/2026,,1,1
+oi ocha,Order,9,15,0,15,24,9,2.90625,13.25,53,4,4/30/2026,,1,1
+menma bamboo shoot,Order,4,46,0,46,50,4,3.585416667,28.5,114,4,4/30/2026,,2,1
+inari,Order,3,7,0,7,10,3,0.910416667,6,24,4,4/30/2026,,2,1
+pork broth,Order,2,2,0,2,4,2,0.377604167,2.5,10,4,4/30/2026,,2,1
+wood ear mashroom,Order,2,22,0,22,24,2,2.279166667,15.75,63,4,4/30/2026,,3,1
+edamame,Order,1,1.5,0,1.5,2,0.5,0.14203125,0.95,3.8,4,4/30/2026,,1,1
+sencha,Order,1,0.5,0,0.5,1,0.5,0.1421875,0.75,3,4,4/30/2026,,1,1
