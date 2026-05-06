@@ -1,13 +1,13 @@
 ﻿Ingredient,Stock,Date
 pork broth,3,1/29/2026
-wood ear mashroom,15,1/29/2026
+wood ear mushroom,15,1/29/2026
 red ginger,0,1/29/2026
 curry,2,1/29/2026
 kizami nori,0,1/29/2026
 ito togarashi,1,1/29/2026
 tonkatsu sauce,0.7,1/29/2026
 pork broth,4,2/4/2026
-wood ear mashroom,12,2/4/2026
+wood ear mushroom,12,2/4/2026
 red ginger,1,2/4/2026
 curry,2,2/4/2026
 oi ocha,11,2/4/2026
@@ -16,12 +16,12 @@ ito togarashi,2,2/4/2026
 tonkatsu sauce,0.7,2/4/2026
 sencha,,2/4/2026
 pork broth,5,2/5/2026
-wood ear mashroom,22,2/5/2026
+wood ear mushroom,22,2/5/2026
 red ginger,1.5,2/5/2026
 kizami nori,3,2/5/2026
 ito togarashi,3,2/5/2026
 pork broth,4.5,2/8/2026
-wood ear mashroom,21,2/8/2026
+wood ear mushroom,21,2/8/2026
 red ginger,1.5,2/8/2026
 oi ocha,8,2/8/2026
 yuzu juice,13,2/8/2026
@@ -30,7 +30,7 @@ ito togarashi,4,2/8/2026
 tonkatsu sauce,,2/8/2026
 sencha,1,2/8/2026
 pork broth,4.5,2/10/2026
-wood ear mashroom,18,2/10/2026
+wood ear mushroom,18,2/10/2026
 red ginger,1.5,2/10/2026
 oi ocha,8,2/10/2026
 yuzu juice,13,2/10/2026
@@ -39,7 +39,7 @@ ito togarashi,2,2/10/2026
 tonkatsu sauce,0.3,2/10/2026
 sencha,1,2/10/2026
 pork broth,4,2/11/2026
-wood ear mashroom,17,2/11/2026
+wood ear mushroom,17,2/11/2026
 red ginger,0.5,2/11/2026
 oi ocha,7,2/11/2026
 yuzu juice,13,2/11/2026
@@ -48,7 +48,7 @@ ito togarashi,2,2/11/2026
 tonkatsu sauce,0.3,2/11/2026
 sencha,1,2/11/2026
 pork broth,1.5,2/17/2026
-wood ear mashroom,10,2/17/2026
+wood ear mushroom,10,2/17/2026
 red ginger,0,2/17/2026
 oi ocha,4,2/17/2026
 yuzu juice,12,2/17/2026
@@ -57,7 +57,7 @@ ito togarashi,3,2/17/2026
 tonkatsu sauce,0.3,2/17/2026
 sencha,0.93,2/17/2026
 pork broth,1,2/18/2026
-wood ear mashroom,7,2/18/2026
+wood ear mushroom,7,2/18/2026
 red ginger,0,2/18/2026
 oi ocha,3,2/18/2026
 yuzu juice,12,2/18/2026
@@ -66,7 +66,7 @@ ito togarashi,3,2/18/2026
 tonkatsu sauce,0.3,2/18/2026
 sencha,0.8,2/18/2026
 pork broth,2.5,2/19/2026
-wood ear mashroom,23,2/19/2026
+wood ear mushroom,23,2/19/2026
 red ginger,0,2/19/2026
 oi ocha,3,2/19/2026
 yuzu juice,13,2/19/2026
@@ -75,7 +75,7 @@ ito togarashi,3,2/19/2026
 tonkatsu sauce,0.5,2/19/2026
 sencha,0.6,2/19/2026
 pork broth,4,2/23/2026
-wood ear mashroom,24,2/23/2026
+wood ear mushroom,24,2/23/2026
 red ginger,0,2/23/2026
 oi ocha,10,2/23/2026
 yuzu juice,13,2/23/2026
@@ -84,7 +84,7 @@ ito togarashi,3,2/23/2026
 tonkatsu sauce,0.5,2/23/2026
 sencha,0.5,2/23/2026
 pork broth,2.5,2/26/2026
-wood ear mashroom,15,2/26/2026
+wood ear mushroom,15,2/26/2026
 red ginger,0,2/26/2026
 oi ocha,9,2/26/2026
 yuzu juice,12,2/26/2026
@@ -93,7 +93,7 @@ ito togarashi,3,2/26/2026
 tonkatsu sauce,0.4,2/26/2026
 sencha,0.5,2/26/2026
 pork broth,2.5,3/2/2026
-wood ear mashroom,17,3/2/2026
+wood ear mushroom,17,3/2/2026
 red ginger,0,3/2/2026
 oi ocha,4,3/2/2026
 yuzu juice,12,3/2/2026
@@ -103,7 +103,7 @@ tonkatsu sauce,0.5,3/2/2026
 sencha,0.3,3/2/2026
 naruto,3,3/2/2026
 pork broth,3.5,3/5/2026
-wood ear mashroom,21,3/5/2026
+wood ear mushroom,21,3/5/2026
 red ginger,0,3/5/2026
 oi ocha,16,3/5/2026
 yuzu juice,12,3/5/2026
@@ -113,7 +113,7 @@ tonkatsu sauce,0.3,3/5/2026
 sencha,0.45,3/5/2026
 naruto,3,3/5/2026
 pork broth,3,3/9/2026
-wood ear mashroom,21,3/9/2026
+wood ear mushroom,21,3/9/2026
 red ginger,1,3/9/2026
 oi ocha,15,3/9/2026
 yuzu juice,11.3,3/9/2026
@@ -123,7 +123,7 @@ tonkatsu sauce,0.3,3/9/2026
 sencha,0.2,3/9/2026
 naruto,2,3/9/2026
 pork broth,3,3/11/2026
-wood ear mashroom,18,3/11/2026
+wood ear mushroom,18,3/11/2026
 red ginger,0,3/11/2026
 oi ocha,14,3/11/2026
 yuzu juice,11.3,3/11/2026
@@ -133,7 +133,7 @@ tonkatsu sauce,0.3,3/11/2026
 sencha,1.2,3/11/2026
 naruto,2,3/11/2026
 pork broth,4.5,3/12/2026
-wood ear mashroom,22,3/12/2026
+wood ear mushroom,22,3/12/2026
 red ginger,0,3/12/2026
 oi ocha,14,3/12/2026
 yuzu juice,10.9,3/12/2026
@@ -141,7 +141,7 @@ ito togarashi,3,3/12/2026
 tonkatsu sauce,0.3,3/12/2026
 sencha,1.2,3/12/2026
 pork broth,3,3/16/2026
-wood ear mashroom,14,3/16/2026
+wood ear mushroom,14,3/16/2026
 red ginger,0,3/16/2026
 oi ocha,12,3/16/2026
 yuzu juice,10.8,3/16/2026
@@ -153,7 +153,7 @@ inari,4,3/16/2026
 kizami nori,2.7,3/16/2026
 nori,0,3/16/2026
 pork broth,3,3/18/2026
-wood ear mashroom,24,3/18/2026
+wood ear mushroom,24,3/18/2026
 red ginger,1,3/18/2026
 oi ocha,12,3/18/2026
 yuzu juice,10.8,3/18/2026
@@ -165,7 +165,7 @@ inari,7,3/18/2026
 kizami nori,2,3/18/2026
 nori,2.5,3/18/2026
 pork broth,3.5,3/19/2026
-wood ear mashroom,27,3/19/2026
+wood ear mushroom,27,3/19/2026
 red ginger,3,3/19/2026
 oi ocha,12,3/19/2026
 yuzu juice,10.1,3/19/2026
@@ -177,7 +177,7 @@ inari,11,3/19/2026
 kizami nori,2,3/19/2026
 nori,4,3/19/2026
 pork broth,1.5,3/23/2026
-wood ear mashroom,18,3/23/2026
+wood ear mushroom,18,3/23/2026
 red ginger,2,3/23/2026
 oi ocha,9,3/23/2026
 yuzu juice,10.1,3/23/2026
@@ -189,7 +189,7 @@ inari,9,3/23/2026
 kizami nori,1,3/23/2026
 nori,1.5,3/23/2026
 pork broth,2.5,3/25/2026
-wood ear mashroom,21,3/25/2026
+wood ear mushroom,21,3/25/2026
 oi ocha,6,3/25/2026
 yuzu juice,9.5,3/25/2026
 ito togarashi,2,3/25/2026
@@ -200,7 +200,7 @@ inari,7,3/25/2026
 kizami nori,1,3/25/2026
 edamame,3,3/25/2026
 pork broth,4,4/2/2026
-wood ear mashroom,25,4/2/2026
+wood ear mushroom,25,4/2/2026
 oi ocha,12,4/2/2026
 yuzu juice,9.5,4/2/2026
 ito togarashi,1.8,4/2/2026
@@ -211,7 +211,7 @@ inari,7,4/2/2026
 kizami nori,3,4/2/2026
 edamame,2.5,4/2/2026
 pork broth,2,4/5/2026
-wood ear mashroom,19,4/5/2026
+wood ear mushroom,19,4/5/2026
 oi ocha,8,4/5/2026
 yuzu juice,8.8,4/5/2026
 ito togarashi,1.5,4/5/2026
@@ -222,7 +222,7 @@ inari,5,4/5/2026
 kizami nori,2.8,4/5/2026
 edamame,2.4,4/5/2026
 pork broth,3.5,4/9/2026
-wood ear mashroom,21,4/9/2026
+wood ear mushroom,21,4/9/2026
 oi ocha,3,4/9/2026
 yuzu juice,9,4/9/2026
 ito togarashi,3.5,4/9/2026
@@ -234,7 +234,7 @@ kizami nori,2,4/9/2026
 edamame,1.6,4/9/2026
 red ginger,0.5,4/9/2026
 pork broth,5,4/14/2026
-wood ear mashroom,27,4/14/2026
+wood ear mushroom,27,4/14/2026
 oi ocha,0,4/14/2026
 yuzu juice,9,4/14/2026
 ito togarashi,3.5,4/14/2026
@@ -246,7 +246,7 @@ kizami nori,3,4/14/2026
 edamame,2,4/14/2026
 red ginger,0,4/14/2026
 pork broth,4.5,4/15/2026
-wood ear mashroom,19,4/15/2026
+wood ear mushroom,19,4/15/2026
 oi ocha,0,4/15/2026
 yuzu juice,9,4/15/2026
 ito togarashi,3.5,4/15/2026
@@ -258,7 +258,7 @@ kizami nori,2,4/15/2026
 edamame,2,4/15/2026
 red ginger,2,4/15/2026
 pork broth,5,4/16/2026
-wood ear mashroom,20,4/16/2026
+wood ear mushroom,20,4/16/2026
 oi ocha,24,4/16/2026
 yuzu juice,9,4/16/2026
 ito togarashi,3.5,4/16/2026
@@ -270,7 +270,7 @@ kizami nori,2,4/16/2026
 edamame,2,4/16/2026
 red ginger,1,4/16/2026
 pork broth,4.5,4/20/2026
-wood ear mashroom,24,4/20/2026
+wood ear mushroom,24,4/20/2026
 oi ocha,24,4/20/2026
 yuzu juice,8,4/20/2026
 ito togarashi,3.5,4/20/2026
@@ -282,7 +282,7 @@ kizami nori,3,4/20/2026
 edamame,1.45,4/20/2026
 red ginger,0,4/20/2026
 pork broth,3.5,4/22/2026
-wood ear mashroom,20,4/22/2026
+wood ear mushroom,20,4/22/2026
 oi ocha,20,4/22/2026
 yuzu juice,8,4/22/2026
 ito togarashi,2.5,4/22/2026
@@ -294,7 +294,7 @@ kizami nori,3,4/22/2026
 edamame,1.3,4/22/2026
 red ginger,1,4/22/2026
 pork broth,2.5,4/24/2026
-wood ear mashroom,16,4/24/2026
+wood ear mushroom,16,4/24/2026
 oi ocha,19,4/24/2026
 yuzu juice,8,4/24/2026
 ito togarashi,2.3,4/24/2026
@@ -306,7 +306,7 @@ kizami nori,3,4/24/2026
 edamame,1.1,4/24/2026
 red ginger,0.5,4/24/2026
 pork broth,2.5,4/26/2026
-wood ear mashroom,25,4/26/2026
+wood ear mushroom,25,4/26/2026
 oi ocha,17,4/26/2026
 yuzu juice,8,4/26/2026
 ito togarashi,2.3,4/26/2026
@@ -318,7 +318,7 @@ kizami nori,3,4/26/2026
 edamame,2,4/26/2026
 red ginger,1,4/26/2026
 pork broth,2,4/30/2026
-wood ear mashroom,22,4/30/2026
+wood ear mushroom,22,4/30/2026
 oi ocha,15,4/30/2026
 yuzu juice,7.2,4/30/2026
 ito togarashi,2.5,4/30/2026
@@ -329,3 +329,15 @@ inari,7,4/30/2026
 kizami nori,3,4/30/2026
 edamame,1.5,4/30/2026
 red ginger,2,4/30/2026
+pork broth,3,5/5/2026
+wood ear mushroom,25,5/5/2026
+oi ocha,13,5/5/2026
+yuzu juice,6.2,5/5/2026
+ito togarashi,1.5,5/5/2026
+tonkatsu sauce,0.1,5/5/2026
+sencha,0.5,5/5/2026
+menma bamboo shoot,18,5/5/2026
+inari,6,5/5/2026
+kizami nori,3,5/5/2026
+edamame,1.5,5/5/2026
+red ginger,1,5/5/2026

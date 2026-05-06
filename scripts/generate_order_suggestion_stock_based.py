@@ -14,7 +14,6 @@ STOCK_FILE = RAW_DIR / "stock_history.csv"
 PURCHASE_FILE = RAW_DIR / "purchase_history.csv"
 
 OUTPUT_ORDER_FILE = PROCESSED_DIR / "order_suggestion.csv"
-OUTPUT_PERIOD_FILE = PROCESSED_DIR / "period_sales_stock_consumption.csv"
 
 
 # ============================================================
@@ -22,7 +21,6 @@ OUTPUT_PERIOD_FILE = PROCESSED_DIR / "period_sales_stock_consumption.csv"
 # ============================================================
 PERIOD = "W"
 
-# Manual required stock levels
 MANUAL_REQUIRED_STOCK = {
     "curry": 0,
     "edamame": 2,
@@ -36,12 +34,11 @@ MANUAL_REQUIRED_STOCK = {
     "pork broth": 4,
     "red ginger": 2,
     "tonkatsu sauce": 0,
-    "wood ear mashroom": 24,
+    "wood ear mushroom": 24,
     "yuzu juice": 5,
     "sencha": 1,
 }
 
-# Optional: order by fixed case/bag size
 ORDER_MULTIPLE = {
     # "oi ocha": 24,
     # "pork broth": 1,
@@ -91,8 +88,7 @@ def load_sales() -> pd.DataFrame:
     sales["qty_sold"] = pd.to_numeric(sales["qty_sold"], errors="coerce").fillna(0)
     sales["product_name"] = sales["product_name"].apply(clean_text)
 
-    sales = sales[sales["date"].notna()].copy()
-    return sales
+    return sales[sales["date"].notna()].copy()
 
 
 def load_stock() -> pd.DataFrame:
@@ -105,13 +101,11 @@ def load_stock() -> pd.DataFrame:
     stock["stock"] = pd.to_numeric(stock["stock"], errors="coerce")
     stock["date"] = pd.to_datetime(stock["date"], errors="coerce")
 
-    stock = stock[
+    return stock[
         stock["ingredient"].notna()
         & stock["stock"].notna()
         & stock["date"].notna()
     ].copy()
-
-    return stock
 
 
 def load_purchase() -> pd.DataFrame:
@@ -135,18 +129,15 @@ def load_purchase() -> pd.DataFrame:
     else:
         purchase["received_date"] = pd.to_datetime(purchase["received_date"], errors="coerce")
 
-    purchase = purchase[purchase["ingredient"].notna()].copy()
-    return purchase
+    return purchase[purchase["ingredient"].notna()].copy()
 
 
 def build_stock_based_consumption(stock: pd.DataFrame, purchase: pd.DataFrame) -> pd.DataFrame:
     """
     Estimate ingredient consumption from stock movement.
+    This is used internally only. No separate CSV is created.
 
     estimated_consumption = previous_stock + received_qty - current_stock
-
-    This is for monitoring only.
-    Required stock is controlled by MANUAL_REQUIRED_STOCK.
     """
     stock = stock.sort_values(["ingredient", "date"]).copy()
     rows = []
@@ -175,14 +166,7 @@ def build_stock_based_consumption(stock: pd.DataFrame, purchase: pd.DataFrame) -
             rows.append({
                 "ingredient": ingredient,
                 "period_start": curr_date.to_period(PERIOD).start_time,
-                "previous_count_date": prev_date,
-                "current_count_date": curr_date,
-                "previous_stock": prev_stock,
-                "current_stock": curr_stock,
-                "received_qty_between_counts": received_qty,
-                "estimated_consumption": estimated_consumption,
                 "consumption_for_average": consumption_for_average,
-                "days_between_counts": days_between_counts,
                 "avg_daily_consumption_interval": consumption_for_average / days_between_counts,
                 "adjustment_flag": adjustment_flag,
             })
@@ -191,14 +175,7 @@ def build_stock_based_consumption(stock: pd.DataFrame, purchase: pd.DataFrame) -
         return pd.DataFrame(columns=[
             "ingredient",
             "period_start",
-            "previous_count_date",
-            "current_count_date",
-            "previous_stock",
-            "current_stock",
-            "received_qty_between_counts",
-            "estimated_consumption",
             "consumption_for_average",
-            "days_between_counts",
             "avg_daily_consumption_interval",
             "adjustment_flag",
         ])
@@ -206,47 +183,29 @@ def build_stock_based_consumption(stock: pd.DataFrame, purchase: pd.DataFrame) -
     return pd.DataFrame(rows)
 
 
-def build_period_output(stock_consumption: pd.DataFrame, sales: pd.DataFrame) -> pd.DataFrame:
+def build_period_summary(stock_consumption: pd.DataFrame) -> pd.DataFrame:
+    """
+    Period summary is created only in memory.
+    It is not saved as a CSV.
+    """
     if stock_consumption.empty:
-        ingredient_period = pd.DataFrame(columns=[
+        return pd.DataFrame(columns=[
             "period_start",
             "ingredient",
-            "estimated_consumption",
             "consumption_for_average",
             "avg_daily_consumption",
-            "count_intervals",
             "adjustment_count",
         ])
-    else:
-        ingredient_period = (
-            stock_consumption
-            .groupby(["period_start", "ingredient"], as_index=False)
-            .agg(
-                estimated_consumption=("estimated_consumption", "sum"),
-                consumption_for_average=("consumption_for_average", "sum"),
-                avg_daily_consumption=("avg_daily_consumption_interval", "mean"),
-                count_intervals=("current_count_date", "count"),
-                adjustment_count=("adjustment_flag", "sum")
-            )
-        )
 
-    sales = sales.copy()
-    sales["period_start"] = sales["date"].dt.to_period(PERIOD).dt.start_time
-
-    sales_period = (
-        sales
-        .groupby("period_start", as_index=False)
+    return (
+        stock_consumption
+        .groupby(["period_start", "ingredient"], as_index=False)
         .agg(
-            total_sold_qty=("qty_sold", "sum"),
-            product_count=("product_name", "nunique")
+            consumption_for_average=("consumption_for_average", "sum"),
+            avg_daily_consumption=("avg_daily_consumption_interval", "mean"),
+            adjustment_count=("adjustment_flag", "sum")
         )
     )
-
-    result = ingredient_period.merge(sales_period, on="period_start", how="left")
-    result["total_sold_qty"] = result["total_sold_qty"].fillna(0)
-    result["product_count"] = result["product_count"].fillna(0).astype(int)
-
-    return result.sort_values(["period_start", "ingredient"])
 
 
 def build_order_suggestion(
@@ -262,7 +221,6 @@ def build_order_suggestion(
         .rename(columns={"stock": "current_stock", "date": "stock_count_date"})
     )
 
-    # Pending orders = purchase rows where received_date is blank.
     pending_orders = purchase[purchase["received_date"].isna()].copy()
 
     pending_summary = (
@@ -305,7 +263,6 @@ def build_order_suggestion(
             )
         )
 
-    # Start from manual required stock list, so every target item appears.
     result = pd.DataFrame({
         "ingredient": list(MANUAL_REQUIRED_STOCK.keys()),
         "required_stock": list(MANUAL_REQUIRED_STOCK.values())
@@ -378,33 +335,26 @@ def build_order_suggestion(
 
 def main():
     print("Loading data...")
-    sales = load_sales()
+
+    # sales_clean_combined.csv is only checked here.
+    # This stock-based version does not use sales data for order calculation.
+    _ = load_sales()
+
     stock = load_stock()
     purchase = load_purchase()
 
-    print("Estimating ingredient consumption from stock history...")
+    print("Estimating consumption internally...")
     stock_consumption = build_stock_based_consumption(stock, purchase)
+    period_df = build_period_summary(stock_consumption)
 
-    print("Building period-level sales and stock-consumption output...")
-    period_df = build_period_output(stock_consumption, sales)
-    period_df.to_csv(OUTPUT_PERIOD_FILE, index=False, encoding="utf-8-sig")
-
-    print("Building order suggestion output with manual required stock...")
+    print("Building order suggestion output...")
     order_df = build_order_suggestion(stock, purchase, period_df)
     order_df.to_csv(OUTPUT_ORDER_FILE, index=False, encoding="utf-8-sig")
 
     print("\nCompleted.")
-    print(f"Period output: {OUTPUT_PERIOD_FILE}")
     print(f"Order suggestion output: {OUTPUT_ORDER_FILE}")
     print("\nPreview:")
     print(order_df.head(30))
-
-    flagged = period_df[period_df["adjustment_count"] > 0]
-    if not flagged.empty:
-        print("\nNote:")
-        print("Some stock intervals had negative estimated consumption.")
-        print("This usually means stock correction or received items were not recorded with received_date.")
-        print("Check period_sales_stock_consumption.csv and the adjustment_count column.")
 
 
 if __name__ == "__main__":
