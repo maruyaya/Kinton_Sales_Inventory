@@ -9,7 +9,6 @@ RAW_DIR = BASE_DIR / "data" / "raw"
 PROCESSED_DIR = BASE_DIR / "data" / "processed"
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
-SALES_FILE = PROCESSED_DIR / "sales_clean_combined.csv"
 STOCK_FILE = RAW_DIR / "stock_history.csv"
 PURCHASE_FILE = RAW_DIR / "purchase_history.csv"
 
@@ -17,9 +16,17 @@ OUTPUT_ORDER_FILE = PROCESSED_DIR / "order_suggestion.csv"
 
 
 # ============================================================
+# Order timing
+# ============================================================
+ORDER_DATE = pd.Timestamp("2026-05-19")
+RECEIVE_DATE = pd.Timestamp("2026-05-20")
+
+
+# ============================================================
 # Settings
 # ============================================================
 PERIOD = "W"
+LOOKBACK_PERIODS = 4
 
 MANUAL_REQUIRED_STOCK = {
     "curry": 0,
@@ -35,13 +42,12 @@ MANUAL_REQUIRED_STOCK = {
     "red ginger": 2,
     "tonkatsu sauce": 0,
     "wood ear mushroom": 24,
-    "yuzu juice": 5,
+    "yuzu juice": 0,
     "sencha": 1,
 }
 
 ORDER_MULTIPLE = {
     # "oi ocha": 24,
-    # "pork broth": 1,
 }
 
 
@@ -61,12 +67,23 @@ def clean_column_names(df: pd.DataFrame) -> pd.DataFrame:
 def clean_text(value):
     if pd.isna(value):
         return value
-    return str(value).strip().lower()
+
+    value = str(value).strip().lower()
+
+    aliases = {
+        "wood ear mashroom": "wood ear mushroom",
+        "wood ear": "wood ear mushroom",
+        "menma": "menma bamboo shoot",
+    }
+
+    return aliases.get(value, value)
 
 
 def require_columns(df: pd.DataFrame, required_cols: list[str], file_name: str):
     missing = [c for c in required_cols if c not in df.columns]
     if missing:
+        print("\nCurrent columns found in file:")
+        print(df.columns.tolist())
         raise ValueError(f"{file_name} is missing required columns: {missing}")
 
 
@@ -76,19 +93,6 @@ def round_up_to_multiple(value, multiple):
     if multiple <= 0:
         return value
     return int(np.ceil(value / multiple) * multiple)
-
-
-def load_sales() -> pd.DataFrame:
-    sales = pd.read_csv(SALES_FILE, encoding="utf-8-sig")
-    sales = clean_column_names(sales)
-
-    require_columns(sales, ["product_name", "qty_sold", "date"], SALES_FILE.name)
-
-    sales["date"] = pd.to_datetime(sales["date"], errors="coerce")
-    sales["qty_sold"] = pd.to_numeric(sales["qty_sold"], errors="coerce").fillna(0)
-    sales["product_name"] = sales["product_name"].apply(clean_text)
-
-    return sales[sales["date"].notna()].copy()
 
 
 def load_stock() -> pd.DataFrame:
@@ -112,6 +116,17 @@ def load_purchase() -> pd.DataFrame:
     purchase = pd.read_csv(PURCHASE_FILE, encoding="utf-8-sig")
     purchase = clean_column_names(purchase)
 
+    # Extra compatibility for common variations
+    rename_map = {
+        "ordered_quantity": "ordered_qty",
+        "order_qty": "ordered_qty",
+        "qty_ordered": "ordered_qty",
+        "expected_delivery_date": "expected_delivery",
+        "delivery_date": "expected_delivery",
+        "received": "received_date",
+    }
+    purchase = purchase.rename(columns={k: v for k, v in rename_map.items() if k in purchase.columns})
+
     require_columns(
         purchase,
         ["date", "ingredient", "ordered_qty", "expected_delivery"],
@@ -133,12 +148,6 @@ def load_purchase() -> pd.DataFrame:
 
 
 def build_stock_based_consumption(stock: pd.DataFrame, purchase: pd.DataFrame) -> pd.DataFrame:
-    """
-    Estimate ingredient consumption from stock movement.
-    This is used internally only. No separate CSV is created.
-
-    estimated_consumption = previous_stock + received_qty - current_stock
-    """
     stock = stock.sort_values(["ingredient", "date"]).copy()
     rows = []
 
@@ -159,7 +168,6 @@ def build_stock_based_consumption(stock: pd.DataFrame, purchase: pd.DataFrame) -
             ]["ordered_qty"].sum()
 
             estimated_consumption = prev_stock + received_qty - curr_stock
-            adjustment_flag = estimated_consumption < 0
             consumption_for_average = max(estimated_consumption, 0)
             days_between_counts = max((curr_date - prev_date).days, 1)
 
@@ -168,7 +176,7 @@ def build_stock_based_consumption(stock: pd.DataFrame, purchase: pd.DataFrame) -
                 "period_start": curr_date.to_period(PERIOD).start_time,
                 "consumption_for_average": consumption_for_average,
                 "avg_daily_consumption_interval": consumption_for_average / days_between_counts,
-                "adjustment_flag": adjustment_flag,
+                "adjustment_flag": estimated_consumption < 0,
             })
 
     if not rows:
@@ -183,36 +191,53 @@ def build_stock_based_consumption(stock: pd.DataFrame, purchase: pd.DataFrame) -
     return pd.DataFrame(rows)
 
 
-def build_period_summary(stock_consumption: pd.DataFrame) -> pd.DataFrame:
-    """
-    Period summary is created only in memory.
-    It is not saved as a CSV.
-    """
+def build_recent_consumption_summary(stock_consumption: pd.DataFrame) -> pd.DataFrame:
     if stock_consumption.empty:
         return pd.DataFrame(columns=[
-            "period_start",
             "ingredient",
-            "consumption_for_average",
             "avg_daily_consumption",
-            "adjustment_count",
+            "avg_period_consumption",
+            "total_recent_consumption",
+            "periods_used",
+            "adjustment_count_recent",
         ])
 
-    return (
+    period_df = (
         stock_consumption
         .groupby(["period_start", "ingredient"], as_index=False)
         .agg(
             consumption_for_average=("consumption_for_average", "sum"),
             avg_daily_consumption=("avg_daily_consumption_interval", "mean"),
-            adjustment_count=("adjustment_flag", "sum")
+            adjustment_count=("adjustment_flag", "sum"),
+        )
+    )
+
+    recent_periods = (
+        period_df["period_start"]
+        .drop_duplicates()
+        .sort_values()
+        .tail(LOOKBACK_PERIODS)
+    )
+
+    recent = period_df[period_df["period_start"].isin(recent_periods)].copy()
+
+    return (
+        recent
+        .groupby("ingredient", as_index=False)
+        .agg(
+            avg_daily_consumption=("avg_daily_consumption", "mean"),
+            avg_period_consumption=("consumption_for_average", "mean"),
+            total_recent_consumption=("consumption_for_average", "sum"),
+            periods_used=("period_start", "nunique"),
+            adjustment_count_recent=("adjustment_count", "sum"),
         )
     )
 
 
-def build_order_suggestion(
-    stock: pd.DataFrame,
-    purchase: pd.DataFrame,
-    period_df: pd.DataFrame
-) -> pd.DataFrame:
+def build_order_suggestion(stock: pd.DataFrame, purchase: pd.DataFrame) -> pd.DataFrame:
+    stock_consumption = build_stock_based_consumption(stock, purchase)
+    recent_consumption = build_recent_consumption_summary(stock_consumption)
+
     latest_stock = (
         stock.sort_values("date")
         .groupby("ingredient", as_index=False)
@@ -221,62 +246,35 @@ def build_order_suggestion(
         .rename(columns={"stock": "current_stock", "date": "stock_count_date"})
     )
 
-    pending_orders = purchase[purchase["received_date"].isna()].copy()
+    pending_by_receive = purchase[
+        purchase["received_date"].isna()
+        & purchase["expected_delivery"].notna()
+        & (purchase["expected_delivery"] <= RECEIVE_DATE)
+    ].copy()
 
     pending_summary = (
-        pending_orders
+        pending_by_receive
         .groupby("ingredient", as_index=False)
         .agg(
-            pending_order_qty=("ordered_qty", "sum"),
-            next_expected_delivery=("expected_delivery", "min")
+            pending_arriving_by_receive_qty=("ordered_qty", "sum"),
+            next_expected_delivery=("expected_delivery", "min"),
         )
     )
 
-    if period_df.empty:
-        avg_consumption = pd.DataFrame(columns=[
-            "ingredient",
-            "avg_period_consumption",
-            "avg_daily_consumption",
-            "total_recent_consumption",
-            "periods_used",
-            "adjustment_count_recent",
-        ])
-    else:
-        recent_periods = (
-            period_df["period_start"]
-            .drop_duplicates()
-            .sort_values()
-            .tail(4)
-        )
-
-        recent = period_df[period_df["period_start"].isin(recent_periods)].copy()
-
-        avg_consumption = (
-            recent
-            .groupby("ingredient", as_index=False)
-            .agg(
-                avg_period_consumption=("consumption_for_average", "mean"),
-                avg_daily_consumption=("avg_daily_consumption", "mean"),
-                total_recent_consumption=("consumption_for_average", "sum"),
-                periods_used=("period_start", "nunique"),
-                adjustment_count_recent=("adjustment_count", "sum")
-            )
-        )
-
     result = pd.DataFrame({
         "ingredient": list(MANUAL_REQUIRED_STOCK.keys()),
-        "required_stock": list(MANUAL_REQUIRED_STOCK.values())
+        "required_stock": list(MANUAL_REQUIRED_STOCK.values()),
     })
 
     result = result.merge(latest_stock, on="ingredient", how="left")
     result = result.merge(pending_summary, on="ingredient", how="left")
-    result = result.merge(avg_consumption, on="ingredient", how="left")
+    result = result.merge(recent_consumption, on="ingredient", how="left")
 
     fill_zero_cols = [
         "current_stock",
-        "pending_order_qty",
-        "avg_period_consumption",
+        "pending_arriving_by_receive_qty",
         "avg_daily_consumption",
+        "avg_period_consumption",
         "total_recent_consumption",
         "periods_used",
         "adjustment_count_recent",
@@ -288,9 +286,27 @@ def build_order_suggestion(
     result["periods_used"] = result["periods_used"].astype(int)
     result["adjustment_count_recent"] = result["adjustment_count_recent"].astype(int)
 
-    result["effective_stock"] = result["current_stock"] + result["pending_order_qty"]
+    result["order_date"] = ORDER_DATE
+    result["receive_date"] = RECEIVE_DATE
+
+    result["days_from_stock_count_to_receive"] = (
+        RECEIVE_DATE - result["stock_count_date"]
+    ).dt.days.clip(lower=0)
+
+    result["predicted_consumption_until_receive"] = (
+        result["avg_daily_consumption"]
+        * result["days_from_stock_count_to_receive"]
+    )
+
+    result["projected_stock_on_receive_before_new_order"] = (
+        result["current_stock"]
+        + result["pending_arriving_by_receive_qty"]
+        - result["predicted_consumption_until_receive"]
+    ).clip(lower=0)
+
     result["raw_order_suggestion"] = (
-        result["required_stock"] - result["effective_stock"]
+        result["required_stock"]
+        - result["projected_stock_on_receive_before_new_order"]
     ).clip(lower=0)
 
     result["order_multiple"] = result["ingredient"].map(ORDER_MULTIPLE).fillna(1)
@@ -311,17 +327,21 @@ def build_order_suggestion(
             "ingredient",
             "order_status",
             "suggested_order_qty",
+            "order_date",
+            "receive_date",
             "current_stock",
-            "pending_order_qty",
-            "effective_stock",
+            "stock_count_date",
+            "days_from_stock_count_to_receive",
+            "pending_arriving_by_receive_qty",
+            "next_expected_delivery",
+            "avg_daily_consumption",
+            "predicted_consumption_until_receive",
+            "projected_stock_on_receive_before_new_order",
             "required_stock",
             "raw_order_suggestion",
-            "avg_daily_consumption",
             "avg_period_consumption",
             "total_recent_consumption",
             "periods_used",
-            "stock_count_date",
-            "next_expected_delivery",
             "adjustment_count_recent",
             "order_multiple",
         ]
@@ -335,20 +355,11 @@ def build_order_suggestion(
 
 def main():
     print("Loading data...")
-
-    # sales_clean_combined.csv is only checked here.
-    # This stock-based version does not use sales data for order calculation.
-    _ = load_sales()
-
     stock = load_stock()
     purchase = load_purchase()
 
-    print("Estimating consumption internally...")
-    stock_consumption = build_stock_based_consumption(stock, purchase)
-    period_df = build_period_summary(stock_consumption)
-
-    print("Building order suggestion output...")
-    order_df = build_order_suggestion(stock, purchase, period_df)
+    print("Building order suggestion...")
+    order_df = build_order_suggestion(stock, purchase)
     order_df.to_csv(OUTPUT_ORDER_FILE, index=False, encoding="utf-8-sig")
 
     print("\nCompleted.")
