@@ -18,15 +18,15 @@ OUTPUT_ORDER_FILE = PROCESSED_DIR / "order_suggestion.csv"
 # ============================================================
 # Order timing
 # ============================================================
-ORDER_DATE = pd.Timestamp("2026-05-19")
-RECEIVE_DATE = pd.Timestamp("2026-05-20")
+ORDER_DATE = pd.Timestamp("2026-05-22")
+RECEIVE_DATE = pd.Timestamp("2026-05-25")
 
 
 # ============================================================
 # Settings
 # ============================================================
 PERIOD = "W"
-LOOKBACK_PERIODS = 4
+LOOKBACK_PERIODS = 1
 
 MANUAL_REQUIRED_STOCK = {
     "curry": 0,
