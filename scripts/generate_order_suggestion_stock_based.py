@@ -18,15 +18,15 @@ OUTPUT_ORDER_FILE = PROCESSED_DIR / "order_suggestion.csv"
 # ============================================================
 # Order timing
 # ============================================================
-ORDER_DATE = pd.Timestamp("2026-05-22")
-RECEIVE_DATE = pd.Timestamp("2026-05-25")
+ORDER_DATE = pd.Timestamp("2026-06-04")
+RECEIVE_DATE = pd.Timestamp("2026-06-05")
 
 
 # ============================================================
 # Settings
 # ============================================================
 PERIOD = "W"
-LOOKBACK_PERIODS = 1
+LOOKBACK_PERIODS = 2
 
 MANUAL_REQUIRED_STOCK = {
     "curry": 0,
@@ -44,6 +44,9 @@ MANUAL_REQUIRED_STOCK = {
     "wood ear mushroom": 24,
     "yuzu juice": 0,
     "sencha": 1,
+    "hondashi": 1,
+    "sesame dressing": 2,
+    "wasabi": 0.5,
 }
 
 ORDER_MULTIPLE = {
