@@ -20,8 +20,8 @@ OUTPUT_ORDER_FILE = PROCESSED_DIR / "order_suggestion.csv"
 # ============================================================
 # Order timing
 # ============================================================
-ORDER_DATE = pd.Timestamp("2026-07-09")
-RECEIVE_DATE = pd.Timestamp("2026-07-10")
+ORDER_DATE = pd.Timestamp("2026-08-06")
+RECEIVE_DATE = pd.Timestamp("2026-08-07")
 
 
 # ============================================================
